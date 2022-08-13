@@ -8,7 +8,7 @@ def test_df():
     df["Age"] = [1, 2, 3]
 
     assert df.columns == ["Name", "Age"]
-    assert df.row(0) == ["Xavier", 1]
+    assert (df.row(0) == ["Xavier", 1]).all()
     assert df.drow(1) == {"Name": "Atticus", "Age": 2}
 
 
