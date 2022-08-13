@@ -62,3 +62,16 @@ class Vec(list):
 
     def any(self):
         return any([bool(x) for x in self])
+
+    def __getitem__(self, key):
+        # binary masks
+        if isinstance(key, list):
+            assert len(key) == len(self)
+
+            # cast to bool
+            mask = [bool(x) for x in key]
+
+            return Vec([x for x, keepx in zip(self, mask) if keepx])
+
+        # default: defer to list implementation
+        return super().__getitem__(key)

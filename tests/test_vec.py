@@ -54,3 +54,12 @@ def test_any_all():
     notrue = Vec([False, False, False])
     assert not notrue.all()
     assert not notrue.any()
+
+
+def test_binary_mask():
+    v1 = Vec([1, 2, 3, 4])
+
+    mask = v1 % 2 == 0
+
+    masked = v1[mask]
+    assert (masked == [2, 4]).all()
