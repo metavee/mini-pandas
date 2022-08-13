@@ -20,3 +20,13 @@ class DF(dict):
 
     def drow(self, i):
         return {name: col[i] for name, col in self.items()}
+
+    def __len__(self):
+        if len(self.columns) == 0:
+            return 0
+
+        return len(self[self.columns[0]])
+
+    @property
+    def shape(self):
+        return (len(self), len(self.columns))
