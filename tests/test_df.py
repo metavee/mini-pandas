@@ -35,3 +35,13 @@ def test_multicolumn_select():
     assert (reordered["Age"] == [1, 2, 3]).all()
     assert (reordered["Name"] == ["Xavier", "Atticus", "Claude"]).all()
     assert (reordered["ID"] == [5, 15, 100]).all()
+
+
+def test_setter():
+    df = DF()
+    df["Name"] = ["Xavier", "Atticus", "Claude"]
+    df["Age"] = -1
+
+    assert type(df["Name"]) == Vec
+
+    assert (df["Age"] == [-1, -1, -1]).all()

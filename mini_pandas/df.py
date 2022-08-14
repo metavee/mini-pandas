@@ -31,6 +31,24 @@ class DF(dict):
     def shape(self):
         return (len(self), len(self.columns))
 
+    def __setitem__(self, key: str, value):
+        if not isinstance(key, str):
+            raise TypeError(f"Column name must be string. Got {type(key)}.")
+
+        if isinstance(value, list) or isinstance(value, tuple):
+            value = vec.Vec(value)
+        elif isinstance(value, vec.Vec):
+            pass
+        else:
+            # scalar?
+            length = len(self)
+            if length == 0:
+                length = 1
+
+            value = vec.Vec([value] * length)
+
+        return super().__setitem__(key, value)
+
     def __getitem__(self, key):
         if isinstance(key, list) or isinstance(key, tuple):
             # multi-column select
