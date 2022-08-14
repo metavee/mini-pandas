@@ -30,3 +30,16 @@ class DF(dict):
     @property
     def shape(self):
         return (len(self), len(self.columns))
+
+    def __getitem__(self, key):
+        if isinstance(key, list) or isinstance(key, tuple):
+            # multi-column select
+            # create new DF with selected columns
+            df = DF()
+            for column in key:
+                df[column] = self[column]
+
+            return df
+
+        # default: fall back to dict behaviour
+        return super().__getitem__(key)
