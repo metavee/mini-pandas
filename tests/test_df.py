@@ -1,6 +1,8 @@
 from mini_pandas.df import DF
 from mini_pandas.vec import Vec
 
+import pytest
+
 
 def test_df():
     df = DF()
@@ -68,3 +70,6 @@ def test_setter():
     assert type(df["Name"]) == Vec
 
     assert (df["Age"] == [-1, -1, -1]).all()
+
+    with pytest.raises(IndexError):
+        df["Extra"] = [1, 2, 3, 4, 5]

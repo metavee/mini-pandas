@@ -29,6 +29,8 @@ class DF(dict):
         return (len(self), len(self.columns))
 
     def __setitem__(self, key: str, value):
+        length = len(self)
+
         if not isinstance(key, str):
             raise TypeError(f"Column name must be string. Got {type(key)}.")
 
@@ -38,11 +40,15 @@ class DF(dict):
             pass
         else:
             # scalar?
-            length = len(self)
             if length == 0:
                 length = 1
 
             value = vec.Vec([value] * length)
+
+        if len(value) != length and length != 0:
+            raise IndexError(
+                f"Length must match existing data. Got {len(value)}, expected {length}."
+            )
 
         return super().__setitem__(key, value)
 
