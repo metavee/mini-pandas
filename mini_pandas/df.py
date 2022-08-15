@@ -15,9 +15,6 @@ class DF(dict):
         for old_name, new_name in zip(list(self.keys()), value):
             self[new_name] = self.pop(old_name)
 
-    def row(self, i):
-        return vec.Vec([col[i] for col in self.values()])
-
     def drow(self, i):
         return {name: col[i] for name, col in self.items()}
 
@@ -50,7 +47,11 @@ class DF(dict):
         return super().__setitem__(key, value)
 
     def __getitem__(self, key):
-        if isinstance(key, list) or isinstance(key, tuple):
+        if isinstance(key, int):
+            # single row select
+            # return as Vec
+            return vec.Vec([col[key] for col in self.values()])
+        elif isinstance(key, list):
             # multi-column select
             # create new DF with selected columns
             df = DF()
@@ -58,6 +59,14 @@ class DF(dict):
                 df[column] = self[column]
 
             return df
+        elif isinstance(key, slice):
+            # multi-row select
+            # create new DF with selected rows
+            df = DF()
+            for column in self.columns:
+                df[column] = self[column][key]
 
-        # default: fall back to dict behaviour
+            return df
+
+        # default: fall back to dict behaviour - single column select
         return super().__getitem__(key)

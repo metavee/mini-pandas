@@ -8,7 +8,7 @@ def test_df():
     df["Age"] = [1, 2, 3]
 
     assert df.columns == ["Name", "Age"]
-    assert (df.row(0) == ["Xavier", 1]).all()
+    assert (df[0] == ["Xavier", 1]).all()
     assert df.drow(1) == {"Name": "Atticus", "Age": 2}
 
 
@@ -35,6 +35,17 @@ def test_multicolumn_select():
     assert (reordered["Age"] == [1, 2, 3]).all()
     assert (reordered["Name"] == ["Xavier", "Atticus", "Claude"]).all()
     assert (reordered["ID"] == [5, 15, 100]).all()
+
+
+def test_multirow_select():
+    df = DF()
+    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
+    df["Age"] = Vec([1, 2, 3])
+    df["ID"] = Vec([5, 15, 100])
+
+    skiprow = df[1:]
+    assert skiprow.columns == ["Name", "Age", "ID"]
+    assert (skiprow["Name"] == ["Atticus", "Claude"]).all()
 
 
 def test_setter():
