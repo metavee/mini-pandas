@@ -67,6 +67,12 @@ class DF(dict):
                 df[column] = self[column][key]
 
             return df
+        elif isinstance(key, tuple):
+            # recursively peel off indexes from tuple
+            if len(key) == 0:
+                return self
+
+            return self[key[0]][key[1:]]
 
         # default: fall back to dict behaviour - single column select
         return super().__getitem__(key)

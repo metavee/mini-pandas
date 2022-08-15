@@ -48,6 +48,18 @@ def test_multirow_select():
     assert (skiprow["Name"] == ["Atticus", "Claude"]).all()
 
 
+def test_2d_select():
+    df = DF()
+    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
+    df["Age"] = Vec([1, 2, 3])
+    df["ID"] = Vec([5, 15, 100])
+
+    subset = df[1:, ["Name", "ID"]]
+    assert subset.columns == ["Name", "ID"]
+    assert (subset["Name"] == ["Atticus", "Claude"]).all()
+    assert (subset["ID"] == [15, 100]).all()
+
+
 def test_setter():
     df = DF()
     df["Name"] = ["Xavier", "Atticus", "Claude"]
