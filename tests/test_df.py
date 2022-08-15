@@ -1,7 +1,7 @@
+import pytest
+
 from mini_pandas.df import DF
 from mini_pandas.vec import Vec
-
-import pytest
 
 
 def test_df():
