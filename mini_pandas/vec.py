@@ -57,6 +57,24 @@ class Vec(list):
     def __bool__(self):
         raise TypeError("Use .any() or .all() to get scalar boolean.")
 
+    def __and__(self, other):
+        return self._op(other, operator.and_)
+
+    def __iand__(self, other):
+        return self._iop(other, operator.and_)
+
+    def __or__(self, other):
+        return self._op(other, operator.or_)
+
+    def __ior__(self, other):
+        return self._iop(other, operator.or_)
+
+    def __xor__(self, other):
+        return self._op(other, operator.xor)
+
+    def __ixor__(self, other):
+        return self._iop(other, operator.xor)
+
     def all(self):
         return all([bool(x) for x in self])
 
@@ -75,3 +93,6 @@ class Vec(list):
 
         # default: defer to list implementation
         return super().__getitem__(key)
+
+    def distinct(self):
+        return Vec(sorted(set(self)))

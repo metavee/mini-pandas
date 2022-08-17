@@ -63,3 +63,26 @@ def test_binary_mask():
 
     masked = v1[mask]
     assert (masked == [2, 4]).all()
+
+
+def test_boolean_ops():
+    v1 = Vec([1, 2, 3, 4])
+
+    evens = v1 % 2 == 0
+    odds = v1 % 2 == 1
+    middle = Vec([False, True, True, False])
+
+    assert ((evens & odds) == [False, False, False, False]).all()
+    assert ((evens & middle) == [False, True, False, False]).all()
+
+    assert ((evens | odds) == [True, True, True, True]).all()
+    assert ((evens | middle) == [False, True, True, True]).all()
+
+    assert ((evens ^ odds) == [True, True, True, True]).all()
+    assert ((evens ^ middle) == [False, False, True, True]).all()
+
+
+def test_distinct():
+    v1 = Vec([5, 5, 4, 4, 3, 3, 2, 2, 1, 1])
+
+    assert sorted(v1.distinct()) == [1, 2, 3, 4, 5]
