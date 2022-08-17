@@ -50,6 +50,21 @@ def test_multirow_select():
     assert (skiprow["Name"] == ["Atticus", "Claude"]).all()
 
 
+def test_multirow_mask_select():
+    df = DF()
+    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
+    df["Age"] = Vec([1, 2, 3])
+    df["ID"] = Vec([5, 15, 100])
+
+    mask = df["ID"] < 20
+    subset = df[mask]
+
+    assert subset.shape == (2, 3)
+    assert (subset["Name"] == ["Xavier", "Atticus"]).all()
+    assert (subset["Age"] == [1, 2]).all()
+    assert (subset["ID"] == [5, 15]).all()
+
+
 def test_2d_select():
     df = DF()
     df["Name"] = Vec(["Xavier", "Atticus", "Claude"])

@@ -54,6 +54,18 @@ class Vec(list):
     def __ne__(self, other):
         return self._op(other, operator.ne)
 
+    def __lt__(self, other):
+        return self._op(other, operator.lt)
+
+    def __le__(self, other):
+        return self._op(other, operator.le)
+
+    def __gt__(self, other):
+        return self._op(other, operator.gt)
+
+    def __ge__(self, other):
+        return self._op(other, operator.ge)
+
     def __bool__(self):
         raise TypeError("Use .any() or .all() to get scalar boolean.")
 

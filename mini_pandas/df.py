@@ -57,7 +57,7 @@ class DF(dict):
             # single row select
             # return as Vec
             return vec.Vec([col[key] for col in self.values()])
-        elif isinstance(key, list):
+        elif isinstance(key, list) and type(key[0]) == str:
             # multi-column select
             # create new DF with selected columns
             df = DF()
@@ -65,7 +65,7 @@ class DF(dict):
                 df[column] = self[column]
 
             return df
-        elif isinstance(key, slice):
+        elif isinstance(key, slice) or (isinstance(key, list) and type(key[0]) == bool):
             # multi-row select
             # create new DF with selected rows
             df = DF()
