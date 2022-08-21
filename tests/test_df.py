@@ -1,6 +1,6 @@
 import pytest
 
-from mini_pandas.df import DF
+from mini_pandas.df import DF, vstack
 from mini_pandas.vec import Vec
 
 
@@ -88,3 +88,92 @@ def test_setter():
 
     with pytest.raises(IndexError):
         df["Extra"] = [1, 2, 3, 4, 5]
+
+
+def test_distinct():
+    df = DF()
+    df["1"] = Vec([1, 2, 1])
+    df["2"] = Vec([1, 2, 1])
+    df["3"] = Vec(["a", "b", "c"])
+
+    df123 = df.distinct()
+    assert df123.shape == (3, 3)
+    assert (df123["1"] == [1, 2, 1]).all()
+    assert (df123["2"] == [1, 2, 1]).all()
+    assert (df123["3"] == ["a", "b", "c"]).all()
+
+    df12 = df[["1", "2"]].distinct()
+    assert df12.shape == (2, 2)
+    assert (df12["1"] == [1, 2]).all()
+    assert (df12["2"] == [1, 2]).all()
+
+
+def test_vstack():
+    df1 = DF()
+    df1["1"] = Vec([1, 2, 1])
+    df1["2"] = Vec([1, 2, 1])
+
+    df2 = DF()
+    df2["1"] = Vec([5, 4, 3])
+    df2["2"] = Vec([2, 1, 0])
+
+    df = vstack(df1, df2)
+    assert df.shape == (6, 2)
+    assert (df["1"] == [1, 2, 1, 5, 4, 3]).all()
+    assert (df["2"] == [1, 2, 1, 2, 1, 0]).all()
+
+
+def test_groupby_agg():
+    df = DF()
+    df["tier"] = [1, 2, 2, 3, 3, 3]
+    df["flag"] = [True, False, True, False, True, False]
+    df["amount"] = [1, 2, 4, 8, 16, 32]
+
+    gb = df.groupby("tier", "flag")
+    res = gb.count().sum("amount").agg()
+
+    assert "tier" in res.columns
+    assert "flag" in res.columns
+    assert "count(*)" in res.columns
+    assert "sum(amount)" in res.columns
+
+    assert res.shape == (5, 4)
+
+    assert (
+        res[
+            ((res["tier"] == 1)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+        ]
+        == [1, 1]
+    ).all()
+
+    assert (
+        res[
+            ((res["tier"] == 2)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+        ]
+        == [1, 4]
+    ).all()
+
+    assert (
+        res[
+            ((res["tier"] == 2)) & (res["flag"] == False),
+            ["count(*)", "sum(amount)"],
+            0,
+        ]
+        == [1, 2]
+    ).all()
+
+    assert (
+        res[
+            ((res["tier"] == 3)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+        ]
+        == [1, 16]
+    ).all()
+
+    assert (
+        res[
+            ((res["tier"] == 3)) & (res["flag"] == False),
+            ["count(*)", "sum(amount)"],
+            0,
+        ]
+        == [2, 40]
+    ).all()
