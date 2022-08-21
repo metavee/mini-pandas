@@ -1,3 +1,6 @@
+import itertools
+import functools
+
 from . import vec
 
 
@@ -82,3 +85,70 @@ class DF(dict):
 
         # default: fall back to dict behaviour - single column select
         return super().__getitem__(key)
+
+    def groupby(self, *columns):
+        uniques = [self[c].distinct() for c in columns]
+
+        subsets = []
+
+        for column_values in itertools.product(*uniques):
+            conditions = [self[c] == v for c, v in zip(columns, column_values)]
+            condition = functools.reduce(lambda a, b: a & b, conditions)
+
+            subset_df = self[condition]
+            if len(subset_df) == 0:
+                continue
+
+            subsets.append((column_values, subset_df))
+
+        return GroupBy(columns, subsets)
+
+    def distinct(self):
+        seen_rows = set()
+        unseen_flags = []
+
+        for i in range(len(self)):
+            row = self[i]
+            row_tup = tuple(row)
+
+            unseen_flags.append(row_tup not in seen_rows)
+
+            seen_rows.add(row_tup)
+
+        return self[unseen_flags]
+
+
+def vstack(*dfs):
+    final_df = DF()
+    for c in dfs[0].columns:
+        final_df[c] = vec.Vec(sum([df[c] for df in dfs], []))
+
+    return final_df
+
+
+class GroupBy:
+    def __init__(self, keys, subsets):
+        self.keys = keys
+        self.subsets = subsets
+        self.agg_cols = []
+
+    def count(self):
+        for key_values, subset in self.subsets:
+            subset["count(*)"] = len(subset)
+
+        self.agg_cols.append("count(*)")
+
+        return self
+
+    def sum(self, column):
+        for key_values, subset in self.subsets:
+            subset[f"sum({column})"] = sum(subset[column])
+
+        self.agg_cols.append(f"sum({column})")
+
+        return self
+
+    def agg(self):
+        return vstack(
+            *[s[1][list(self.keys) + self.agg_cols].distinct() for s in self.subsets]
+        )

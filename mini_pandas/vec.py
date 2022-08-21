@@ -94,6 +94,9 @@ class Vec(list):
         return any([bool(x) for x in self])
 
     def __getitem__(self, key):
+        if isinstance(key, tuple) and len(key) == 0:
+            return self
+
         # binary masks
         if isinstance(key, list):
             assert len(key) == len(self)
@@ -108,3 +111,6 @@ class Vec(list):
 
     def distinct(self):
         return Vec(sorted(set(self)))
+
+    def mean(self):
+        return sum(self) / len(self)
