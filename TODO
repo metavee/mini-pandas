@@ -1,0 +1,15 @@
+# easy
+- concat method
+- append, extend
+- dropna
+- fillna
+- pretty print in jupyter
+- pretty print in terminal
+- apply
+
+# medium
+- to/from CSV
+
+# hard
+- groupby count, sum, min, max, mean
+- joins
