@@ -1,3 +1,5 @@
+import math
+
 from mini_pandas.vec import Vec
 
 
@@ -86,3 +88,8 @@ def test_distinct():
     v1 = Vec([5, 5, 4, 4, 3, 3, 2, 2, 1, 1])
 
     assert sorted(v1.distinct()) == [1, 2, 3, 4, 5]
+
+
+def test_isnull():
+    v1 = Vec([0, None, math.nan, "", False])
+    assert (v1.isnull() == [False, True, True, False, False]).all()

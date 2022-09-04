@@ -1,3 +1,4 @@
+import math
 import operator
 
 
@@ -114,3 +115,6 @@ class Vec(list):
 
     def mean(self):
         return sum(self) / len(self)
+
+    def isnull(self):
+        return Vec([i is None or (type(i) == float and math.isnan(i)) for i in self])
