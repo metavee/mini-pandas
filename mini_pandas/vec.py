@@ -19,6 +19,9 @@ class Vec(list):
 
         return self
 
+    def _unary_op(self, op):
+        return Vec([op(val) for val in self])
+
     def __add__(self, other):
         return self._op(other, operator.add)
 
@@ -30,6 +33,15 @@ class Vec(list):
 
     def __isub__(self, other):
         return self._iop(other, operator.sub)
+
+    def __pos__(self):
+        return self._unary_op(operator.pos)
+
+    def __neg__(self):
+        return self._unary_op(operator.neg)
+
+    def __abs__(self):
+        return self._unary_op(abs)
 
     def __mul__(self, other):
         return self._op(other, operator.mul)
@@ -88,6 +100,9 @@ class Vec(list):
     def __ixor__(self, other):
         return self._iop(other, operator.xor)
 
+    def __invert__(self):
+        return self._unary_op(operator.not_)
+
     def all(self):
         return all([bool(x) for x in self])
 
@@ -118,3 +133,9 @@ class Vec(list):
 
     def isnull(self):
         return Vec([i is None or (type(i) == float and math.isnan(i)) for i in self])
+
+    def dropna(self):
+        return self[~self.isnull()]
+
+    def apply(self, fxn):
+        return Vec([fxn(x) for x in self])

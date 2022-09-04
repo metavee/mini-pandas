@@ -77,6 +77,21 @@ def test_2d_select():
     assert (subset["ID"] == [15, 100]).all()
 
 
+def test_iterrows():
+    df = DF()
+    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
+    df["Age"] = Vec([1, 2, 3])
+    df["ID"] = Vec([5, 15, 100])
+
+    all_rows = list(df.iterrows())
+
+    assert len(all_rows) == 3
+
+    for i in range(3):
+        assert (all_rows[i] == df[i]).all()
+        assert isinstance(all_rows[i], Vec)
+
+
 def test_setter():
     df = DF()
     df["Name"] = ["Xavier", "Atticus", "Claude"]
@@ -121,6 +136,22 @@ def test_vstack():
     assert df.shape == (6, 2)
     assert (df["1"] == [1, 2, 1, 5, 4, 3]).all()
     assert (df["2"] == [1, 2, 1, 2, 1, 0]).all()
+
+
+def test_dropna():
+    df = DF()
+    df["a"] = Vec([1, None, 3])
+    df["b"] = Vec([None, None, 3])
+    df["c"] = Vec([1, None, 3])
+
+    res_any = df.dropna()
+    assert len(res_any) == 1
+    assert (res_any[0] == [3, 3, 3]).all()
+
+    res_all = df.dropna(True)
+    assert len(res_all) == 2
+    assert (res_all[0] == [1, None, 1]).all()
+    assert (res_all[1] == [3, 3, 3]).all()
 
 
 def test_groupby_agg():

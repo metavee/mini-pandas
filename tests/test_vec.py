@@ -28,6 +28,22 @@ def test_sub():
     assert (v1 - 1 == [0, 1, 2, 3]).all()
 
 
+def test_neg():
+    v1 = Vec([1, 2, 3, 4])
+    assert (-v1 == [-1, -2, -3, -4]).all()
+
+
+def test_pos():
+    v1 = Vec([1, 2, 3, 4])
+    assert (v1 == v1).all()
+
+
+def test_abs():
+    v1 = Vec([1, -2, 3, -4])
+
+    assert (abs(v1) == [1, 2, 3, 4]).all()
+
+
 def test_mul():
     v1 = Vec([1, 2, 3, 4])
     v2 = Vec([-4, -3, -2, -1])
@@ -93,3 +109,10 @@ def test_distinct():
 def test_isnull():
     v1 = Vec([0, None, math.nan, "", False])
     assert (v1.isnull() == [False, True, True, False, False]).all()
+
+
+def test_dropna():
+    v1 = Vec([0, None, math.nan, "", False])
+    res = v1.dropna()
+
+    assert (res == [0, "", False]).all()

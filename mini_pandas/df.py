@@ -117,6 +117,31 @@ class DF(dict):
 
         return self[unseen_flags]
 
+    def iterrows(self):
+        for i in range(len(self)):
+            yield self[i]
+
+    def isnull(self):
+        df = DF()
+
+        for col in self:
+            df[col] = self[col].isnull()
+
+        return df
+
+    def dropna(self, require_all=False):
+        null_flags = self.isnull()
+
+        def condense_row(row):
+            if require_all:
+                return row.all()
+            else:
+                return row.any()
+
+        mask = ~vec.Vec([condense_row(row) for row in null_flags.iterrows()])
+
+        return self[mask]
+
 
 def vstack(*dfs):
     final_df = DF()
@@ -127,16 +152,38 @@ def vstack(*dfs):
 
 
 class GroupBy:
+    """Partially-computed groupby aggregation of a dataframe.
+
+    Use various functions to add aggregate columns to the result.
+
+    Run .agg() to condense into the final aggregated form.
+    """
+
     def __init__(self, keys, subsets):
         self.keys = keys
         self.subsets = subsets
         self.agg_cols = []
 
-    def count(self):
-        for key_values, subset in self.subsets:
-            subset["count(*)"] = len(subset)
+    def count(self, col=None):
+        def count_column(column):
+            """Create count function based on a given column."""
 
-        self.agg_cols.append("count(*)")
+            def inner(subset):
+                return subset[column].isnull().sum()
+
+            return inner
+
+        if col is None:
+            col_name = "count(*)"
+            count_fxn = len
+        else:
+            col_name = f"count({col})"
+            count_fxn = count_column(col)
+
+        for key_values, subset in self.subsets:
+            subset[col_name] = count_fxn(subset)
+
+        self.agg_cols.append(col_name)
 
         return self
 
