@@ -154,6 +154,19 @@ def test_dropna():
     assert (res_all[1] == [3, 3, 3]).all()
 
 
+def test_fillna():
+    df = DF()
+    df["a"] = Vec([1, None, 3])
+    df["b"] = Vec([None, None, 3])
+    df["c"] = Vec([1, None, 3])
+
+    res = df.fillna(-1)
+    assert len(res) == 3
+    assert (res["a"] == [1, -1, 3]).all()
+    assert (res["b"] == [-1, -1, 3]).all()
+    assert (res["c"] == [1, -1, 3]).all()
+
+
 def test_groupby_agg():
     df = DF()
     df["tier"] = [1, 2, 2, 3, 3, 3]

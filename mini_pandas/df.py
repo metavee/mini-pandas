@@ -142,6 +142,14 @@ class DF(dict):
 
         return self[mask]
 
+    def fillna(self, default):
+        df = DF()
+
+        for c in self.columns:
+            df[c] = self[c].fillna(default)
+
+        return df
+
 
 def vstack(*dfs):
     final_df = DF()

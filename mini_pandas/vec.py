@@ -139,3 +139,8 @@ class Vec(list):
 
     def apply(self, fxn):
         return Vec([fxn(x) for x in self])
+
+    def fillna(self, default):
+        nulls = self.isnull()
+
+        return Vec([val if not isnull else default for val, isnull in zip(self, nulls)])

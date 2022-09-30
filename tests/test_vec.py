@@ -116,3 +116,10 @@ def test_dropna():
     res = v1.dropna()
 
     assert (res == [0, "", False]).all()
+
+
+def test_fillna():
+    v1 = Vec([0, None, math.nan, "", False])
+    v2 = v1.fillna(-1)
+
+    assert (v2 == [0, -1, -1, "", False]).all()
