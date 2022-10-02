@@ -5,6 +5,9 @@ import operator
 class Vec(list):
     """One-dimensional array."""
 
+    def __repr__(self):
+        return f"Vec({[v for v in self]})"
+
     def _op(self, other, op):
         if isinstance(other, list):
             assert len(self) == len(other)

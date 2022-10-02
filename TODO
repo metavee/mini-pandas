@@ -1,14 +1,16 @@
 # easy
 - append, extend
-- pretty print in jupyter
-- pretty print in terminal
 
 # medium
 - to/from CSV
 - null/missing support in basic functions - should be handled in vec, groupby (indexes), etc.
-- groupby transform
 - apply
+- better constructor for DF
 
 # hard
 - groupby count, sum, min, max, mean
+
+# won't do
+
 - joins
+- groupby transform

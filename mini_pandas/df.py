@@ -7,6 +7,38 @@ from . import vec
 class DF(dict):
     """Dataframe, or two-dimensional table."""
 
+    def __repr__(self):
+        return f"DF({dict(self)})"
+
+    def __str__(self):
+        column_widths = [
+            max(len(c), max(self[c].apply(lambda v: len(str(v))))) for c in self.columns
+        ]
+
+        def format_row(row):
+            return (
+                "|"
+                + "|".join(
+                    [
+                        f" {str(v).ljust(maxlen)} "
+                        for v, maxlen in zip(row, column_widths)
+                    ]
+                )
+                + "|"
+            )
+
+        header_row = format_row(self.columns)
+        header_border = format_row(["-" * maxlen for maxlen in column_widths])
+
+        rows = [header_row, header_border] + [
+            format_row(row) for row in self.iterrows()
+        ]
+
+        return "\n".join(rows)
+
+    def _repr_markdown_(self):
+        return str(self)
+
     @property
     def columns(self):
         return list(self.keys())
