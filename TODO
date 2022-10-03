@@ -1,6 +1,3 @@
-# easy
-- append, extend
-
 # medium
 - to/from CSV
 - null/missing support in basic functions - should be handled in vec, groupby (indexes), etc.

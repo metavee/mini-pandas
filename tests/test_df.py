@@ -264,3 +264,28 @@ def test_groupby_agg():
         ]
         == [2, 40]
     ).all()
+
+
+def test_df_append():
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+        }
+    )
+
+    with pytest.raises(ValueError):
+        df.append(["d", 4, 9])
+
+    df.append(["d", 4])
+
+    assert (df["Name"] == ["Xavier", "Atticus", "Claude", "d"]).all()
+    assert (df["Age"] == [1, 2, 3, 4]).all()
+
+    with pytest.raises(ValueError):
+        df.append({"name": "e", "age": 5})
+
+    df.append({"Name": "e", "Age": 5})
+
+    assert (df["Name"] == ["Xavier", "Atticus", "Claude", "d", "e"]).all()
+    assert (df["Age"] == [1, 2, 3, 4, 5]).all()

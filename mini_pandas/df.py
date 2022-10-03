@@ -194,6 +194,25 @@ class DF(dict):
 
         return df
 
+    def append(self, row):
+        if not len(row) == len(self.columns):
+            raise ValueError(
+                f"Got wrong number of columns: {len(row)}, expecting {len(self.columns)}."
+            )
+
+        if isinstance(row, list):
+            # assume matching column order
+            for col, value in zip(self.columns, row):
+                self[col].append(value)
+        elif isinstance(row, dict):
+            if not all([col in self.columns for col in row.keys()]):
+                raise ValueError(
+                    f"Got mismatched column names {row.keys()}, expecting {self.columns}."
+                )
+
+            for col, value in row.items():
+                self[col].append(value)
+
 
 def vstack(*dfs):
     final_df = DF()
