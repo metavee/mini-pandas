@@ -7,6 +7,18 @@ from . import vec
 class DF(dict):
     """Dataframe, or two-dimensional table."""
 
+    def __init__(self, data=None):
+        super().__init__()
+
+        if data is None:
+            return
+
+        if isinstance(data, dict):
+            for (k, v) in data.items():
+                self[k] = v
+        else:
+            raise TypeError(f"Unsupported type {type(data)}. Try dict of columns.")
+
     def __repr__(self):
         return f"DF({dict(self)})"
 

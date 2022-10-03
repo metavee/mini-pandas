@@ -14,20 +14,42 @@ def test_df():
     assert df.drow(1) == {"Name": "Atticus", "Age": 2}
 
 
+def test_dict_constructor():
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+        }
+    )
+
+    assert df.shape == (3, 2)
+    assert df.columns == ["Name", "Age"]
+    assert (df["Name"] == ["Xavier", "Atticus", "Claude"]).all()
+    assert type(df["Name"]) == Vec
+    assert (df["Age"] == [1, 2, 3]).all()
+    assert type(df["Age"]) == Vec
+
+
 def test_df_dims():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = [1, 2, 3]
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+        }
+    )
 
     assert len(df) == 3
     assert df.shape == (3, 2)
 
 
 def test_multicolumn_select():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = Vec([1, 2, 3])
-    df["ID"] = Vec([5, 15, 100])
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+            "ID": [5, 15, 100],
+        }
+    )
 
     reordered = df[["Age", "ID", "Name"]]
     assert isinstance(reordered, DF)
@@ -40,10 +62,13 @@ def test_multicolumn_select():
 
 
 def test_multirow_select():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = Vec([1, 2, 3])
-    df["ID"] = Vec([5, 15, 100])
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+            "ID": [5, 15, 100],
+        }
+    )
 
     skiprow = df[1:]
     assert skiprow.columns == ["Name", "Age", "ID"]
@@ -51,10 +76,13 @@ def test_multirow_select():
 
 
 def test_multirow_mask_select():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = Vec([1, 2, 3])
-    df["ID"] = Vec([5, 15, 100])
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+            "ID": [5, 15, 100],
+        }
+    )
 
     mask = df["ID"] < 20
     subset = df[mask]
@@ -66,10 +94,13 @@ def test_multirow_mask_select():
 
 
 def test_2d_select():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = Vec([1, 2, 3])
-    df["ID"] = Vec([5, 15, 100])
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+            "ID": [5, 15, 100],
+        }
+    )
 
     subset = df[1:, ["Name", "ID"]]
     assert subset.columns == ["Name", "ID"]
@@ -78,10 +109,13 @@ def test_2d_select():
 
 
 def test_iterrows():
-    df = DF()
-    df["Name"] = Vec(["Xavier", "Atticus", "Claude"])
-    df["Age"] = Vec([1, 2, 3])
-    df["ID"] = Vec([5, 15, 100])
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": [1, 2, 3],
+            "ID": [5, 15, 100],
+        }
+    )
 
     all_rows = list(df.iterrows())
 
@@ -93,9 +127,12 @@ def test_iterrows():
 
 
 def test_setter():
-    df = DF()
-    df["Name"] = ["Xavier", "Atticus", "Claude"]
-    df["Age"] = -1
+    df = DF(
+        {
+            "Name": ["Xavier", "Atticus", "Claude"],
+            "Age": -1,
+        }
+    )
 
     assert type(df["Name"]) == Vec
 
@@ -106,10 +143,13 @@ def test_setter():
 
 
 def test_distinct():
-    df = DF()
-    df["1"] = Vec([1, 2, 1])
-    df["2"] = Vec([1, 2, 1])
-    df["3"] = Vec(["a", "b", "c"])
+    df = DF(
+        {
+            "1": [1, 2, 1],
+            "2": [1, 2, 1],
+            "3": ["a", "b", "c"],
+        }
+    )
 
     df123 = df.distinct()
     assert df123.shape == (3, 3)
@@ -124,13 +164,19 @@ def test_distinct():
 
 
 def test_vstack():
-    df1 = DF()
-    df1["1"] = Vec([1, 2, 1])
-    df1["2"] = Vec([1, 2, 1])
+    df1 = DF(
+        {
+            "1": [1, 2, 1],
+            "2": [1, 2, 1],
+        }
+    )
 
-    df2 = DF()
-    df2["1"] = Vec([5, 4, 3])
-    df2["2"] = Vec([2, 1, 0])
+    df2 = DF(
+        {
+            "1": [5, 4, 3],
+            "2": [2, 1, 0],
+        }
+    )
 
     df = vstack(df1, df2)
     assert df.shape == (6, 2)
@@ -139,10 +185,7 @@ def test_vstack():
 
 
 def test_dropna():
-    df = DF()
-    df["a"] = Vec([1, None, 3])
-    df["b"] = Vec([None, None, 3])
-    df["c"] = Vec([1, None, 3])
+    df = DF({"a": [1, None, 3], "b": [None, None, 3], "c": [1, None, 3]})
 
     res_any = df.dropna()
     assert len(res_any) == 1
@@ -155,10 +198,7 @@ def test_dropna():
 
 
 def test_fillna():
-    df = DF()
-    df["a"] = Vec([1, None, 3])
-    df["b"] = Vec([None, None, 3])
-    df["c"] = Vec([1, None, 3])
+    df = DF({"a": [1, None, 3], "b": [None, None, 3], "c": [1, None, 3]})
 
     res = df.fillna(-1)
     assert len(res) == 3
@@ -168,10 +208,13 @@ def test_fillna():
 
 
 def test_groupby_agg():
-    df = DF()
-    df["tier"] = [1, 2, 2, 3, 3, 3]
-    df["flag"] = [True, False, True, False, True, False]
-    df["amount"] = [1, 2, 4, 8, 16, 32]
+    df = DF(
+        {
+            "tier": [1, 2, 2, 3, 3, 3],
+            "flag": [True, False, True, False, True, False],
+            "amount": [1, 2, 4, 8, 16, 32],
+        }
+    )
 
     gb = df.groupby("tier", "flag")
     res = gb.count().sum("amount").agg()
