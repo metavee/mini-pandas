@@ -240,7 +240,7 @@ class GroupBy:
             """Create count function based on a given column."""
 
             def inner(subset):
-                return subset[column].isnull().sum()
+                return sum(~subset[column].isnull())
 
             return inner
 
@@ -263,6 +263,22 @@ class GroupBy:
             subset[f"sum({column})"] = sum(subset[column])
 
         self.agg_cols.append(f"sum({column})")
+
+        return self
+
+    def min(self, column):
+        for key_values, subset in self.subsets:
+            subset[f"min({column})"] = min(subset[column])
+
+        self.agg_cols.append(f"min({column})")
+
+        return self
+
+    def max(self, column):
+        for key_values, subset in self.subsets:
+            subset[f"max({column})"] = max(subset[column])
+
+        self.agg_cols.append(f"max({column})")
 
         return self
 

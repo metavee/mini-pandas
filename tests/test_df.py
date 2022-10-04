@@ -207,6 +207,20 @@ def test_fillna():
     assert (res["c"] == [1, -1, 3]).all()
 
 
+def test_groupby_count_column():
+    df = DF(
+        {
+            "flag": [True, True, True, False, False, False],
+            "name": ["Alice", "Bob", None, "Carol", None, None],
+        }
+    )
+
+    res = df.groupby("flag").count("name").agg()
+
+    assert (res[res["flag"] == True, "count(name)"] == [2]).all()
+    assert (res[res["flag"] == False, "count(name)"] == [1]).all()
+
+
 def test_groupby_agg():
     df = DF(
         {
@@ -217,52 +231,58 @@ def test_groupby_agg():
     )
 
     gb = df.groupby("tier", "flag")
-    res = gb.count().sum("amount").agg()
+    res = gb.count().sum("amount").min("amount").max("amount").agg()
 
     assert "tier" in res.columns
     assert "flag" in res.columns
     assert "count(*)" in res.columns
     assert "sum(amount)" in res.columns
 
-    assert res.shape == (5, 4)
+    assert res.shape == (5, 6)
 
     assert (
         res[
-            ((res["tier"] == 1)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+            ((res["tier"] == 1)) & (res["flag"] == True),
+            ["count(*)", "sum(amount)", "min(amount)", "max(amount)"],
+            0,
         ]
-        == [1, 1]
+        == [1, 1, 1, 1]
     ).all()
 
     assert (
         res[
-            ((res["tier"] == 2)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+            ((res["tier"] == 2)) & (res["flag"] == True),
+            ["count(*)", "sum(amount)", "min(amount)", "max(amount)"],
+            0,
         ]
-        == [1, 4]
+        == [1, 4, 4, 4]
     ).all()
 
     assert (
         res[
             ((res["tier"] == 2)) & (res["flag"] == False),
-            ["count(*)", "sum(amount)"],
+            ["count(*)", "sum(amount)", "min(amount)", "max(amount)"],
             0,
         ]
-        == [1, 2]
+        == [1, 2, 2, 2]
     ).all()
 
     assert (
         res[
-            ((res["tier"] == 3)) & (res["flag"] == True), ["count(*)", "sum(amount)"], 0
+            ((res["tier"] == 3)) & (res["flag"] == True),
+            ["count(*)", "sum(amount)", "min(amount)", "max(amount)"],
+            0,
         ]
-        == [1, 16]
+        == [1, 16, 16, 16]
     ).all()
 
     assert (
         res[
             ((res["tier"] == 3)) & (res["flag"] == False),
-            ["count(*)", "sum(amount)"],
+            ["count(*)", "sum(amount)", "min(amount)", "max(amount)"],
             0,
         ]
-        == [2, 40]
+        == [2, 40, 8, 32]
     ).all()
 
 

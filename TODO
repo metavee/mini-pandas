@@ -3,9 +3,6 @@
 - null/missing support in basic functions - should be handled in vec, groupby (indexes), etc.
 - apply
 
-# hard
-- groupby count, sum, min, max, mean
-
 # won't do
 
 - joins
