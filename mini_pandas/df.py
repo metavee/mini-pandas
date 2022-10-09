@@ -1,3 +1,5 @@
+import csv
+from email.quoprimime import quote
 import itertools
 import functools
 
@@ -212,6 +214,56 @@ class DF(dict):
 
             for col, value in row.items():
                 self[col].append(value)
+
+    def to_csv(self, filename, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL):
+        with open(filename, "w", newline="") as ofile:
+            writer = csv.writer(
+                ofile, delimiter=delimiter, quotechar=quotechar, quoting=quoting
+            )
+            writer.writerow(self.columns)
+            for row in self.iterrows():
+                writer.writerow(row)
+
+
+def read_csv(filename, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL):
+    with open(filename, "r") as ifile:
+        reader = csv.reader(
+            ifile, delimiter=delimiter, quotechar=quotechar, quoting=quoting
+        )
+
+        rows = [row for row in reader]
+        column_names = rows[0]
+        rows = rows[1:]
+
+    column_data = [list(column) for column in zip(*rows)]
+
+    # insert nulls
+    for i in range(len(column_names)):
+        for j in range(len(rows)):
+            if column_data[i][j] == "":
+                column_data[i][j] = None
+
+    df = DF()
+
+    for name, data in zip(column_names, column_data):
+        # cast numerics if possible
+        try:
+            data_float = [float(d) if d is not None else None for d in data]
+            data_int = [int(d) if d is not None else None for d in data]
+            if all(
+                (dfloat is None and dint is None) or (dfloat == dint)
+                for dfloat, dint in zip(data_float, data_int)
+            ):
+                data = data_int
+            else:
+                data = data_float
+        except ValueError:
+            # could not cast to numeric; leave as string
+            pass
+
+        df[name] = data
+
+    return df
 
 
 def vstack(*dfs):

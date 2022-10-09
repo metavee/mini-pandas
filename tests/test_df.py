@@ -1,6 +1,7 @@
+import csv
 import pytest
 
-from mini_pandas.df import DF, vstack
+from mini_pandas.df import DF, read_csv, vstack
 from mini_pandas.vec import Vec
 
 
@@ -12,6 +13,10 @@ def test_df():
     assert df.columns == ["Name", "Age"]
     assert (df[0] == ["Xavier", 1]).all()
     assert df.drow(1) == {"Name": "Atticus", "Age": 2}
+
+    del df["Name"]
+    assert df.columns == ["Age"]
+    assert (df["Age"] == [1, 2, 3]).all()
 
 
 def test_dict_constructor():
@@ -309,3 +314,47 @@ def test_df_append():
 
     assert (df["Name"] == ["Xavier", "Atticus", "Claude", "d", "e"]).all()
     assert (df["Age"] == [1, 2, 3, 4, 5]).all()
+
+
+def test_to_csv(tmp_path):
+    df = DF(
+        {
+            "Name": ["Xavier", None, "Claude"],
+            "Age": [1, 2, 3],
+        }
+    )
+
+    filename = tmp_path / "test_to.csv"
+
+    df.to_csv(filename)
+
+    with open(filename, "r") as ifile:
+        reader = csv.DictReader(ifile)
+
+        rows = [row for row in reader]
+
+        assert len(rows) == 3
+
+        # note: DictReader doesn't do any type casting
+        assert rows[0] == {"Name": "Xavier", "Age": "1"}
+        assert rows[1] == {"Name": "", "Age": "2"}
+        assert rows[2] == {"Name": "Claude", "Age": "3"}
+
+
+def test_read_csv(tmp_path):
+    df = DF(
+        {
+            "Name": ["Xavier", None, "Claude"],
+            "Age": [1, 2, 3],
+        }
+    )
+
+    filename = tmp_path / "test_read_csv"
+    df.to_csv(filename)
+
+    df2 = read_csv(filename)
+
+    assert df2.shape == df.shape
+
+    assert (df["Name"] == df2["Name"]).all()
+    assert (df["Age"] == df2["Age"]).all()
