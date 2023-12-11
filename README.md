@@ -21,7 +21,11 @@ Toy project.
 from mini_pandas.df import DF
 
 # create a dataframe based on our grocery list
-groceries = DF({"Item": ["Red onion", "Carrots", "Paprika", "Cheese", "Potatoes", "Milk"], "Category": ["Vegetables", "Vegetables", "Spices", "Dairy", "Vegetables", "Dairy"], "Price": [1.08, 2.32, 1.55, 4.89, 3.40, 2.99]})
+groceries = DF({
+    "Item": ["Red onion", "Carrots", "Paprika", "Cheese", "Potatoes", "Milk"],
+    "Category": ["Vegetables", "Vegetables", "Spices", "Dairy", "Vegetables", "Dairy"],
+    "Price": [1.08, 2.32, 1.55, 4.89, 3.40, 2.99]
+})
 print(groceries)
 # | Item      | Category   | Price |
 # | --------- | ---------- | ----- |
