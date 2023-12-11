@@ -1,5 +1,4 @@
 import csv
-from email.quoprimime import quote
 import itertools
 import functools
 
